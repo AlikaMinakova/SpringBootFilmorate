@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +33,7 @@ public class UserController {
         if (user.getName().equals("")) {
             user.setName(user.getLogin());
         }
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = simpleDateFormat.parse(String.valueOf(LocalDate.now()));
         if (user.getBirthday().after(date)){
             log.debug("Ошибка добавления пользователя. Некорректно введена дата рождения");
@@ -42,8 +43,8 @@ public class UserController {
 
     @GetMapping("")
     public List<User> findAllUsers() {
-        log.debug("Получен список пользователей: {}", (List<User>) users.values());
-        return (List<User>) users.values();
+        log.debug("Получен список пользователей: {}", new ArrayList<User>(users.values()));
+        return new ArrayList<User>(users.values());
     }
 
     @PostMapping("")

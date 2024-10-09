@@ -7,9 +7,11 @@ import ru.yandex.practicum.filmorate.exception.film.InvalidDurationExeption;
 import ru.yandex.practicum.filmorate.exception.film.InvalidReleaseDateException;
 import ru.yandex.practicum.filmorate.exception.user.InvalidNameExeption;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,10 +33,10 @@ public class FilmController {
             log.debug("Ошибка добавления фильма. Описание больше 200 символов");
             throw new InvalidNameExeption("the description should be no more than 200 characters long");
         }
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = simpleDateFormat.parse("1895-12-28");
         if (film.getReleaseDate().before(date)) {
-            log.debug("Ошибка добавления фильма. Дата релиза раньше 28.12.1985");
+            log.debug("Ошибка добавления фильма. Дата релиза раньше 28.12.1895");
             throw new InvalidReleaseDateException("the date should not be earlier than 28.12.1895");
         }
         if (film.getDuration() <= 0) {
@@ -45,8 +47,8 @@ public class FilmController {
 
     @GetMapping("")
     public List<Film> findAllFilms() {
-        log.debug("Получен список фильмов: {}", (List<Film>) films.values());
-        return (List<Film>) films.values();
+        log.debug("Получен список фильмов: {}", new ArrayList<Film>(films.values()));
+        return new ArrayList<Film>(films.values());
     }
 
     @PostMapping("")
