@@ -4,24 +4,33 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
-import ru.yandex.practicum.filmorate.controller.UserController;
+import ru.yandex.practicum.filmorate.exception.film.FilmAlreadyExistExeption;
+import ru.yandex.practicum.filmorate.exception.film.InvalidDescriptionExeption;
+import ru.yandex.practicum.filmorate.exception.film.InvalidDurationExeption;
+import ru.yandex.practicum.filmorate.exception.film.InvalidReleaseDateException;
+import ru.yandex.practicum.filmorate.exception.user.InvalidNameExeption;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 @SpringBootTest
 class FilmTests {
 
+    private static final Calendar calendar = Calendar.getInstance();
+
+    static {
+        calendar.set(2022, Calendar.MARCH, 27);
+    }
+
+    private final static Date date = calendar.getTime();
+
     @Test
     void createCorrectFilm() throws ParseException {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2022, Calendar.MARCH, 27);
-        Date date = calendar.getTime();
-
         Film film = new Film("film", "lalala", date, 20.0);
         FilmController filmController = new FilmController();
         filmController.createFilm(film);
@@ -29,92 +38,57 @@ class FilmTests {
     }
 
     @Test
-    void createIncorrectNameFilm() throws ParseException {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2022, Calendar.MARCH, 27);
-        Date date = calendar.getTime();
-
+    void createIncorrectNameFilm() {
         Film film = new Film("", "lalala", date, 20.0);
         FilmController filmController = new FilmController();
-        try {
-            filmController.createFilm(film);
-        } catch (Exception e) {
-            Assertions.assertEquals("the name should not be empty", e.getMessage());
-        }
+        assertThrows(InvalidNameExeption.class,
+                () -> filmController.createFilm(film));
     }
 
     @Test
     void createIncorrectDescriptionFilm() throws ParseException {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2022, Calendar.MARCH, 27);
-        Date date = calendar.getTime();
-
         Film film = new Film("name", "" +
+                "descriptiondescriptiondescriptiondescriptiondescriptiondescription" +
                 "descriptiondescriptiondescriptiondescriptiondescriptiondescription" +
                 "descriptiondescriptiondescriptiondescriptiondescriptiondescription" +
                 "descriptiondescriptiondescriptiondescriptiondescriptiondescription",
                 date, 20.0);
         FilmController filmController = new FilmController();
-        try {
-            filmController.createFilm(film);
-        } catch (Exception e) {
-            Assertions.assertEquals("the description should be no more than 200 characters long", e.getMessage());
-        }
+        assertThrows(InvalidDescriptionExeption.class,
+                () -> filmController.createFilm(film));
     }
 
     @Test
     void createIncorrectRelizDateFilm() throws ParseException {
-        Calendar calendar = Calendar.getInstance();
         calendar.set(1894, Calendar.MARCH, 27);
         Date date = calendar.getTime();
 
-        Film film = new Film("name", "", date, 20.0);
+        Film film = new Film("name", "description", date, 20.0);
         FilmController filmController = new FilmController();
-        try {
-            filmController.createFilm(film);
-        } catch (Exception e) {
-            Assertions.assertEquals("the date should not be earlier than 28.12.1895", e.getMessage());
-        }
+        assertThrows(InvalidReleaseDateException.class,
+                () -> filmController.createFilm(film));
     }
 
     @Test
     void createIncorrectDurationFilm() throws ParseException {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2024, Calendar.MARCH, 27);
-        Date date = calendar.getTime();
-
         Film film = new Film("name", "", date, 0.0);
         FilmController filmController = new FilmController();
-        try {
-            filmController.createFilm(film);
-        } catch (Exception e) {
-            Assertions.assertEquals("the duration should not be <= 0", e.getMessage());
-        }
+        assertThrows(InvalidDurationExeption.class,
+                () -> filmController.createFilm(film));
     }
 
     @Test
     void FilmAlreadyExist() throws ParseException {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2024, Calendar.MARCH, 27);
-        Date date = calendar.getTime();
-
         Film film = new Film("name", "", date, 26.0);
         Film film2 = new Film("name", "2", date, 25.0);
         FilmController filmController = new FilmController();
         filmController.createFilm(film);
-        try {
-            filmController.createFilm(film2);
-        } catch (Exception e) {
-            Assertions.assertEquals("the film already exists", e.getMessage());
-        }
+        assertThrows(FilmAlreadyExistExeption.class,
+                () -> filmController.createFilm(film2));
     }
 
     @Test
     void UpdateFilm() throws ParseException {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2024, Calendar.MARCH, 27);
-        Date date = calendar.getTime();
-
         Film film = new Film("name", "", date, 26.0);
         Film film2 = new Film("name", "2", date, 25.0);
         FilmController filmController = new FilmController();

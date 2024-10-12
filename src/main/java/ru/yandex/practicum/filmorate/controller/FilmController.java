@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.film.FilmAlreadyExistExeption;
+import ru.yandex.practicum.filmorate.exception.film.InvalidDescriptionExeption;
 import ru.yandex.practicum.filmorate.exception.film.InvalidDurationExeption;
 import ru.yandex.practicum.filmorate.exception.film.InvalidReleaseDateException;
 import ru.yandex.practicum.filmorate.exception.user.InvalidNameExeption;
@@ -31,7 +32,7 @@ public class FilmController {
         }
         if (film.getDescription().length() > 200) {
             log.debug("Ошибка добавления фильма. Описание больше 200 символов");
-            throw new InvalidNameExeption("the description should be no more than 200 characters long");
+            throw new InvalidDescriptionExeption("the description should be no more than 200 characters long");
         }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = simpleDateFormat.parse("1895-12-28");
