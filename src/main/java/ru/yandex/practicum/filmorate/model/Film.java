@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class Film {
@@ -23,11 +25,13 @@ public class Film {
     @NonNull
     @EqualsAndHashCode.Exclude
     private Double duration;
+    private Set<Integer> likesFromUsers;
 
     public Film(@NonNull String name, @NonNull String description, @NonNull Date releaseDate, @NonNull Double duration) {
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+        this.likesFromUsers = new HashSet<>();
     }
 }
