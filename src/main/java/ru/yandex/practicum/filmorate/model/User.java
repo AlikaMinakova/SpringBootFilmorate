@@ -1,19 +1,13 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDate;
 
 @Data
 public class User {
-    @NonNull
-    @EqualsAndHashCode.Exclude
-    private int id;
     @NonNull
     private String email;
     @NonNull
@@ -24,15 +18,12 @@ public class User {
     private String name;
     @NonNull
     @EqualsAndHashCode.Exclude
-    private Date birthday;
-    @EqualsAndHashCode.Exclude
-    private Set<Integer> friends;
+    private LocalDate birthday;
 
-    public User(@NonNull String email, @NonNull String login, @NonNull String name, @NonNull Date birthday) {
+    public User(@NonNull String email, @NonNull String login, @NonNull String name, @NonNull LocalDate birthday) {
         this.email = email;
         this.login = login;
         this.name = name;
         this.birthday = birthday;
-        this.friends = new HashSet<>();
     }
 }

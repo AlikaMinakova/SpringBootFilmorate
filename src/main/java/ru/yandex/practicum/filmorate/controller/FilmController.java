@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.text.ParseException;
@@ -17,9 +16,9 @@ public class FilmController {
 
     private final FilmService filmService;
 
-@Autowired
-    public FilmController(FilmService filmStorage) {
-        this.filmService = filmStorage;
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
     }
 
     @GetMapping("")
@@ -27,25 +26,25 @@ public class FilmController {
         return filmService.findAllFilms();
     }
 
-    @GetMapping("/{id}")
-    public Film getFilmId(@PathVariable String id) {
-        return filmService.getFilmId(Integer.parseInt(id));
+    @GetMapping("/{name}")
+    public Film getFilmId(@PathVariable String name) {
+        return filmService.getFilmName(name);
     }
 
-    @PutMapping("/{id}/like/{userId}")
-    public void addLikeFilm(@RequestBody String id, @RequestBody String userId) throws ParseException {
-        filmService.addLike(Integer.parseInt(id), Integer.parseInt(userId));
+//    @PutMapping("/{id}/like/{userId}")
+//    public void addLikeFilm(@RequestBody String id, @RequestBody String userId) throws ParseException {
+//        filmService.addLike(Integer.parseInt(id), Integer.parseInt(userId));
+//    }
+//
+    @DeleteMapping("/{name}")
+    public void deleteLikeFilm(@PathVariable String name) throws ParseException {
+        filmService.deleteFilmByName(name);
     }
-
-    @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLikeFilm(@RequestBody String id, @RequestBody String userId) throws ParseException {
-        filmService.deleteLike(Integer.parseInt(id), Integer.parseInt(userId));
-    }
-
-    @GetMapping("/popular")
-    public List<Film> getTopFilms(@RequestParam(value = "count", defaultValue = "10") String count) {
-        return filmService.findTop10Likes(Integer.parseInt(count));
-    }
+//
+//    @GetMapping("/popular")
+//    public List<Film> getTopFilms(@RequestParam(value = "count", defaultValue = "10") String count) {
+//        return filmService.findTop10Likes(Integer.parseInt(count));
+//    }
 
     @PostMapping("")
     public Film createFilm(@RequestBody Film film) throws ParseException {
