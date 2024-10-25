@@ -6,12 +6,12 @@ import lombok.NonNull;
 @Data
 public class Like {
     @NonNull
-    private int id;
+    private String film;
     @NonNull
-    private String user_email;
+    private String user;
 
-    public Like(@NonNull int id, @NonNull String user_email) {
-        this.id = id;
-        this.user_email = user_email;
+    public Like(@NonNull String film, @NonNull String user) {
+        this.film = film;
+        this.user = user;
     }
 }

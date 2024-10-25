@@ -31,20 +31,10 @@ public class FilmController {
         return filmService.getFilmName(name);
     }
 
-//    @PutMapping("/{id}/like/{userId}")
-//    public void addLikeFilm(@RequestBody String id, @RequestBody String userId) throws ParseException {
-//        filmService.addLike(Integer.parseInt(id), Integer.parseInt(userId));
-//    }
-//
     @DeleteMapping("/{name}")
     public void deleteLikeFilm(@PathVariable String name) throws ParseException {
         filmService.deleteFilmByName(name);
     }
-//
-//    @GetMapping("/popular")
-//    public List<Film> getTopFilms(@RequestParam(value = "count", defaultValue = "10") String count) {
-//        return filmService.findTop10Likes(Integer.parseInt(count));
-//    }
 
     @PostMapping("")
     public Film createFilm(@RequestBody Film film) throws ParseException {

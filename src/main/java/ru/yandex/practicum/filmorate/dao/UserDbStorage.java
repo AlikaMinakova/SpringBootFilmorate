@@ -14,5 +14,5 @@ public interface UserDbStorage {
 
     public void deleteUser(String email) throws ParseException;
 
-    public User findUserByEmail(String email) throws ParseException;
+    public User findUserByEmail(String email);
 }

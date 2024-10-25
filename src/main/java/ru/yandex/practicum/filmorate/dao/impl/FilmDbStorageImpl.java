@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.impl;
+package ru.yandex.practicum.filmorate.dao.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -6,13 +6,10 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dao.FilmDbStorage;
-import ru.yandex.practicum.filmorate.exception.film.FilmAlreadyExistExeption;
-import ru.yandex.practicum.filmorate.exception.film.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -26,6 +23,7 @@ public class FilmDbStorageImpl implements FilmDbStorage {
     public FilmDbStorageImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+
     @Override
     public List<Film> findAllFilms() {
         String sql = "select * from films";
@@ -64,12 +62,7 @@ public class FilmDbStorageImpl implements FilmDbStorage {
     }
 
     @Override
-    public Film createFilm(Film film) throws ParseException {
-        Film filmOptional = findByNameFilm(film.getName());
-        if (filmOptional != null) {
-            log.info("Ошибка создания фильма. Уже создан");
-            throw new FilmAlreadyExistExeption("фильм уже создан");
-        }
+    public Film createFilm(Film film) {
         String sql = "insert into films (name, description, releasedate, duration) values (?, ?, ?, ?)";
         jdbcTemplate.update(sql, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration());
         log.info("Фильм {} создан", film.getName());
@@ -77,12 +70,7 @@ public class FilmDbStorageImpl implements FilmDbStorage {
     }
 
     @Override
-    public Film updateFilm(Film film) throws ParseException {
-        Film filmOptional = findByNameFilm(film.getName());
-        if (filmOptional == null) {
-            log.info("Ошибка обновления фильма. Нет в бд");
-            throw new FilmNotFoundException("фильма нет в бд");
-        }
+    public Film updateFilm(Film film) {
         String sql = "update films set description = ?, releasedate = ?, duration = ? where name = ?";
         jdbcTemplate.update(sql, film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getName());
         log.info("Обновлён фильм {}", film.getName());

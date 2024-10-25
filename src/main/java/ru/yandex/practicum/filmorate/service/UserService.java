@@ -4,9 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.UserDbStorage;
+import ru.yandex.practicum.filmorate.exception.user.*;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -20,11 +22,60 @@ public class UserService {
         this.userDbStorage = userDbStorage;
     }
 
-    public User getUserByEmail(String email) {
-        return userDbStorage.findAllUsers().stream().filter(x -> x.getEmail().equals(email)).toList().get(0);
+    public void checkExeption(User user) throws ParseException {
+        if (user.getEmail().equals("") || !user.getEmail().contains("@")) {
+            log.debug("Ошибка добавления пользователя. Некорректно введён email");
+            throw new InvalidEmailException("InvalidEmailException");
+        }
+        if (user.getLogin().equals("") || user.getLogin().contains(" ")) {
+            log.debug("Ошибка добавления пользователя. Некорректно введён логин");
+            throw new InvalidLoginExeption("InvalidLogin");
+        }
+        if (user.getName().equals("")) {
+            user.setName(user.getLogin());
+        }
+        LocalDate date = LocalDate.now();
+        if (user.getBirthday().isAfter(date)) {
+            log.debug("Ошибка добавления пользователя. Некорректно введена дата рождения");
+            throw new InvalidBirthdayExeption("InvalidBirthdayExeption");
+        }
     }
 
-//    public List<User> findAllFriends(Integer userId) {
+    public User getUserByEmail(String email) {
+        User user = userDbStorage.findUserByEmail(email);
+        if (user == null) {
+            throw new NotFoundUserException("пользователя нет в бд");
+        }
+        return userDbStorage.findUserByEmail(email);
+    }
+
+    public void deleteUser(String email) throws ParseException {
+        userDbStorage.deleteUser(email);
+    }
+
+    public List<User> findAllUsers() {
+        return userDbStorage.findAllUsers();
+    }
+
+    public User createUser(User user) throws ParseException {
+        checkExeption(user);
+        User userDb = userDbStorage.findUserByEmail(user.getEmail());
+        if (userDb != null) {
+            throw new UserAlreadyExistException("пользователь уже есть в бд");
+        }
+        return userDbStorage.createUser(user);
+    }
+
+    public User updateUser(User user) throws ParseException {
+        checkExeption(user);
+        User userDb = userDbStorage.findUserByEmail(user.getEmail());
+        if (userDb == null) {
+            throw new UserAlreadyExistException("пользователя нет в бд");
+        }
+        return userDbStorage.updateUser(user);
+    }
+
+    //    public List<User> findAllFriends(Integer userId) {
 //        User user = getUserId(userId);
 //        Set<Integer> friends = user.getFriends();
 //        log.debug("Получен список друзей пользователя с id: {}", userId);
@@ -47,20 +98,4 @@ public class UserService {
 //    return userFirstFriends.stream()
 //            .filter(otherFriends::contains).toList();
 //}
-
-    public void deleteUser(String email) throws ParseException {
-        userDbStorage.deleteUser(email);
-    }
-
-    public List<User> findAllUsers() {
-        return userDbStorage.findAllUsers();
-    }
-
-    public User createUser(User user) throws ParseException {
-        return userDbStorage.createUser(user);
-    }
-
-    public User updateUser(User user) throws ParseException {
-        return userDbStorage.updateUser(user);
-    }
 }

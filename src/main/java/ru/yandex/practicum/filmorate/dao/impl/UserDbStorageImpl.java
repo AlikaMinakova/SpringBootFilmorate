@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.impl;
+package ru.yandex.practicum.filmorate.dao.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -76,7 +76,7 @@ public class UserDbStorageImpl implements UserDbStorage {
     }
 
     @Override
-    public User findUserByEmail(String email) throws ParseException {
+    public User findUserByEmail(String email) {
         SqlRowSet userRow = jdbcTemplate.queryForRowSet("select * from users where email = ?", email);
         if (userRow.next()) {
             User user = new User(Objects.requireNonNull(userRow.getString("email")),
